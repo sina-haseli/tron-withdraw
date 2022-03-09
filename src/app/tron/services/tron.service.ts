@@ -97,6 +97,7 @@ export class TronService extends BusinessService<Tron> {
           owner_address: ownerAddress,
           receiver_address: receiverAddress,
           txID: freeze.txID,
+          unFreeze: false,
         });
         return freeze.txID;
       }

@@ -23,4 +23,7 @@ export class FreezeBalance extends BusinessEntity {
 
   @Column({ nullable: true })
   txID: string;
+
+  @Column({ nullable: true })
+  unFreeze: boolean;
 }
