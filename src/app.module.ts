@@ -7,6 +7,7 @@ import { TransactionModule } from './app/transaction/transaction.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { join } from 'path';
 import { ServeStaticModule } from '@nestjs/serve-static';
+import { FreezeBalanceModule } from './app/freeze-balance/freeze-balance.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ServeStaticModule } from '@nestjs/serve-static';
     RedisModule,
     TronModule,
     TransactionModule,
+    FreezeBalanceModule,
   ],
 })
 export class AppModule {}

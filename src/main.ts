@@ -14,6 +14,6 @@ async function bootstrap() {
   app.enableCors(options);
   enableSwagger(app);
   useContainer(app.select(AppModule), { fallbackOnErrors: true });
-  await app.listen(1337);
+  await app.listen(1338);
 }
 bootstrap();

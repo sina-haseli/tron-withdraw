@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { BusinessService } from '../../base/business.service';
 import { Tron } from '../entities/tron.entity';
 import { TronRepository } from '../repositories/tron.repository';
+import { TransactionService } from '../../transaction/services/transaction.service';
+import { FreezeBalanceService } from '../../freeze-balance/services/freeze-balance.service';
 
 const TronWeb = require('tronweb');
 
@@ -16,7 +18,11 @@ const tronWeb = new TronWeb(fullNode, solidityNode, event);
 
 @Injectable()
 export class TronService extends BusinessService<Tron> {
-  constructor(private readonly tronRepository: TronRepository) {
+  constructor(
+    private readonly tronRepository: TronRepository,
+    private readonly transactionService: TransactionService,
+    private freezeBalanceService: FreezeBalanceService,
+  ) {
     super(tronRepository);
   }
 
@@ -68,11 +74,11 @@ export class TronService extends BusinessService<Tron> {
   // }
 
   async freezeBalance(
-    amount,
-    duration,
-    resource,
-    ownerAddress,
-    receiverAddress,
+    amount: number,
+    duration: number,
+    resource: string,
+    ownerAddress: string,
+    receiverAddress: string,
   ) {
     try {
       const freeze = await tronWeb.transactionBuilder.freezeBalance(
@@ -84,6 +90,14 @@ export class TronService extends BusinessService<Tron> {
       );
       if (freeze) {
         console.log(freeze.raw_data.contract[0].parameter.value);
+        await this.freezeBalanceService.save({
+          frozen_duration: Number(duration),
+          frozen_balance: Number(amount),
+          resource: resource,
+          owner_address: ownerAddress,
+          receiver_address: receiverAddress,
+          txID: freeze.txID,
+        });
         return freeze.txID;
       }
     } catch (error) {
@@ -107,7 +121,7 @@ export class TronService extends BusinessService<Tron> {
       sun,
       3,
       'ENERGY',
-      walletAddress,
+      'TAKE1FM5EGPYqbuYMvZYFsYkX1tjfFUXom',
       walletAddress,
     );
     console.log(freeze);
@@ -119,6 +133,12 @@ export class TronService extends BusinessService<Tron> {
       );
       console.log(transaction);
       if (transaction.result === true) {
+        await this.transactionService.save({
+          transactionId: transaction.transaction.txID,
+          amount: amount,
+          from_address: 'TAKE1FM5EGPYqbuYMvZYFsYkX1tjfFUXom',
+          to_address: walletAddress,
+        });
         return transaction.transaction.txID;
       }
     }

@@ -11,10 +11,7 @@ export class Transaction extends BusinessEntity {
   transactionId: string;
 
   @Column({ nullable: true })
-  blockNumber: number;
-
-  @Column({ nullable: true })
-  amount: string;
+  amount: number;
 
   @ManyToOne(() => Tron, (tron) => tron.transactions, {
     eager: false,
@@ -22,5 +19,8 @@ export class Transaction extends BusinessEntity {
   tron: Tron;
 
   @Column({ nullable: true })
-  isConfirmed: boolean;
+  from_address: string;
+
+  @Column({ nullable: true })
+  to_address: string;
 }
