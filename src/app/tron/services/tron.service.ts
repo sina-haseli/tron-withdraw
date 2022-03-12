@@ -73,6 +73,25 @@ export class TronService extends BusinessService<Tron> {
   //   }
   // }
 
+  async getAccountResources(address) {
+    return await tronWeb.trx.getAccountResources(address);
+  }
+
+  async getFrozenBandwidth(trx) {
+    const resource = await this.getAccountResources(
+      'TVXQJhGM1m1HSqNWykWq53msZ1qn78Ciq4',
+    );
+    const bp =
+      'TotalNetWeight' in resource
+        ? (trx * resource.TotalNetLimit) / resource.TotalNetWeight
+        : 0;
+    const bpPrice =
+      'TotalNetWeight' in resource
+        ? ((10e5 * resource.TotalNetWeight) / resource.TotalNetLimit).toFixed(2)
+        : 0;
+    return { bp: bp, accountResource: resource, bpPrice: bpPrice };
+  }
+
   async freezeBalance(
     amount: number,
     duration: number,
